@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -78,21 +81,28 @@ public class FrameAlineacionManual extends JFrame {
 	private JRadioButton radioButtonZoom3;
 	
 	public static void main(String[] args) {
-		// cargo opencv
-		
-		System.load("C:/opencv/build/java/x64/opencv_java410.dll");
-		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrameAlineacionManual frame = new FrameAlineacionManual();
-					frame.setVisible(true);
-					frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try (InputStream input = new FileInputStream("config.properties")) {
+            Properties prop = new Properties();
+            // load a properties file
+            prop.load(input);
+
+    		// cargo opencv
+            String opencvPath = prop.getProperty("opencv_path");
+    		System.load(opencvPath);
+    		EventQueue.invokeLater(new Runnable() {
+    			public void run() {
+    				try {
+    					FrameAlineacionManual frame = new FrameAlineacionManual();
+    					frame.setVisible(true);
+    					frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+    				} catch (Exception e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		});
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 	}
 
 	
